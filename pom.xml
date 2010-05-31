@@ -7,10 +7,10 @@
 	</parent>
 	<groupId>de.cosmocode.palava</groupId>
 	<artifactId>palava-ipc-json-custom</artifactId>
-	<name>Palava IPC Json Custom</name>
+	<name>Palava IPC JSON Custom</name>
 	<version>1.0-SNAPSHOT</version>
 	<scm>
-		<developerConnection>https://palava.svn.cosmocode.de/palava-ipc-json-custom/trunk</developerConnection>
+		<developerConnection>scm:svn:https://palava.svn.cosmocode.de/palava-ipc-json-custom/trunk</developerConnection>
 	</scm>
 	<repositories>
 		<repository>
