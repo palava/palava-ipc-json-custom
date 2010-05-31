@@ -16,15 +16,9 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-
 import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.Registry.Key;
 import de.cosmocode.palava.core.Registry.Proxy;
@@ -32,21 +26,13 @@ import de.cosmocode.palava.core.Registry.SilentProxy;
 import de.cosmocode.palava.core.lifecycle.Disposable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
 import de.cosmocode.palava.core.lifecycle.LifecycleException;
-import de.cosmocode.palava.ipc.IpcArguments;
-import de.cosmocode.palava.ipc.IpcCallCreateEvent;
-import de.cosmocode.palava.ipc.IpcCallDestroyEvent;
-import de.cosmocode.palava.ipc.IpcCallScope;
-import de.cosmocode.palava.ipc.IpcCommandExecutionException;
-import de.cosmocode.palava.ipc.IpcCommandExecutor;
-import de.cosmocode.palava.ipc.IpcSession;
-import de.cosmocode.palava.ipc.IpcSessionProvider;
-import de.cosmocode.palava.ipc.MapIpcArguments;
+import de.cosmocode.palava.ipc.*;
 import de.cosmocode.palava.ipc.json.Json;
-import de.cosmocode.palava.ipc.protocol.DetachedCall;
-import de.cosmocode.palava.ipc.protocol.DetachedConnection;
-import de.cosmocode.palava.ipc.protocol.MapProtocol;
-import de.cosmocode.palava.ipc.protocol.Protocol;
-import de.cosmocode.palava.ipc.protocol.ProtocolException;
+import de.cosmocode.palava.ipc.protocol.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Implements a custom json-based ipc protocol which relies on the following
@@ -92,13 +78,14 @@ import de.cosmocode.palava.ipc.protocol.ProtocolException;
  * </pre>
  *
  * @since 1.0
+ * @author Tobias Sarnowski
  * @author Willi Schoenborn
  */
 final class CustomProtocol extends MapProtocol implements Initializable, Disposable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomProtocol.class);
 
-    private static final String VERSION = "palava/2.0";
+    private static final String VERSION = "palava2/1.0";
 
     private static final String PROTOCOL = "protocol";
     
