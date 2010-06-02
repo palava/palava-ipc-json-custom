@@ -166,13 +166,10 @@ final class CustomProtocol extends MapProtocol implements Initializable, Disposa
         final Map<?, ?> meta = Map.class.cast(request.get(META));
         checkNotNull(meta, META);
         
-        final Object identifier = meta.get(IDENTIFIER);
-        checkNotNull(identifier, IDENTIFIER);
+        final String identifier = String.class.cast(meta.get(IDENTIFIER));
+        final String sessionId = String.class.cast(request.get(SESSION));
         
-        final Object sessionId = request.get(SESSION);
-        checkNotNull(sessionId, SESSION);
-        
-        final IpcSession session = provider.getSession(sessionId.toString(), identifier.toString());
+        final IpcSession session = provider.getSession(sessionId, identifier);
         connection.attachTo(session);
         
         LOG.trace("Using {}", session);
