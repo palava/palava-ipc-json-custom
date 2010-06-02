@@ -22,8 +22,10 @@ import com.google.inject.Module;
 /**
  * Binds {@link CustomProtocol} as eager singleton.
  * 
+ * @deprecated use {@link CustomProtocolModule} instead
  * @author Tobias Sarnowski
  */
+@Deprecated
 public class JsonCustomModule implements Module {
 
     @Override
