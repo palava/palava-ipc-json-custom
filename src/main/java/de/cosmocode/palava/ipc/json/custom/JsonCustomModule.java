@@ -18,17 +18,17 @@ package de.cosmocode.palava.ipc.json.custom;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
+ * Binds {@link CustomProtocol} as eager singleton.
+ * 
  * @author Tobias Sarnowski
  */
 public class JsonCustomModule implements Module {
-    private static final Logger LOG = LoggerFactory.getLogger(JsonCustomModule.class);
 
     @Override
     public void configure(Binder binder) {
         binder.bind(CustomProtocol.class).asEagerSingleton();
     }
+    
 }
