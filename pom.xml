@@ -8,9 +8,9 @@
   <groupId>de.cosmocode.palava</groupId>
   <artifactId>palava-ipc-json-custom</artifactId>
   <name>Palava IPC JSON Custom</name>
-  <version>1.0.2</version>
+  <version>1.1-SNAPSHOT</version>
   <scm>
-    <developerConnection>scm:svn:https://palava.svn.cosmocode.de/palava-ipc-json-custom/tags/1.0.2</developerConnection>
+    <developerConnection>scm:svn:https://palava.svn.cosmocode.de/palava-ipc-json-custom/trunk</developerConnection>
   </scm>
   <repositories>
     <repository>
