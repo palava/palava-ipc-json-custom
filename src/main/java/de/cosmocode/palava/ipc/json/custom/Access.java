@@ -16,14 +16,18 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
-import de.cosmocode.palava.ipc.IpcCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.cosmocode.palava.ipc.IpcCall;
+
 /**
+ * 
+ * 
  * @author Tobias Sarnowski
  */
 final class Access {
+    
     private static final Logger LOG = LoggerFactory.getLogger(Access.class);
 
     private final String requestUri;
@@ -47,10 +51,8 @@ final class Access {
 
     public void doLog() {
         LOG.info("{}  ({} successful, {} failed commands, {})", new Object[]{
-                requestUri,
-                success,
-                failure,
-                identifier
+            requestUri, success, failure, identifier
         });
     }
+    
 }

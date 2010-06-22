@@ -16,34 +16,39 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
+import java.util.Map;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.lifecycle.Disposable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
 import de.cosmocode.palava.core.lifecycle.LifecycleException;
-import de.cosmocode.palava.ipc.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCallFilter;
+import de.cosmocode.palava.ipc.IpcCallFilterChain;
+import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+import de.cosmocode.palava.ipc.IpcConnection;
+import de.cosmocode.palava.ipc.IpcConnectionDestroyEvent;
 
 /**
+ * A filter which logs ipc access.
+ * 
  * @author Tobias Sarnowski
  */
 @Singleton
 final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, Initializable, Disposable {
-    private static final Logger LOG = LoggerFactory.getLogger(AccessLogger.class);
 
     private static final String ACCESS_LOG = "ACCESS_LOG";
-    private Registry registry;
-
+    
+    private final Registry registry;
 
     @Inject
     public AccessLogger(Registry registry) {
         this.registry = registry;
     }
-
 
     @Override
     public void initialize() throws LifecycleException {
@@ -55,27 +60,30 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
         registry.remove(this);
     }
 
-
     @Override
-    public Map<String, Object> filter(IpcCall call, IpcCommand command, IpcCallFilterChain chain) throws IpcCommandExecutionException {
-        // new connection?
+    public Map<String, Object> filter(IpcCall call, IpcCommand command, IpcCallFilterChain chain) 
+        throws IpcCommandExecutionException {
+        
         Access access = call.getConnection().get(ACCESS_LOG);
+        
+        // new connection?
         if (access == null) {
-            access = new Access(
-                    String.class.cast(call.getConnection().get(CustomProtocol.REQUEST_URI)),
-                    call.getConnection().getSession().getIdentifier()
-            );
+            final String requestUri = call.getConnection().get(CustomProtocol.REQUEST_URI);
+            final String identifier = call.getConnection().getSession().getIdentifier();
+            access = new Access(requestUri, identifier);
             call.getConnection().set(ACCESS_LOG, access);
         }
 
         try {
-            Map<String,Object> result = chain.filter(call, command);
+            final Map<String, Object> result = chain.filter(call, command);
             access.logSuccess(call);
             return result;
         } catch (IpcCommandExecutionException e) {
             access.logFailure(call);
             throw e;
+        /* CHECKSTYLE:OFF */
         } catch (RuntimeException e) {
+        /* CHECKSTYLE:ON */
             access.logFailure(call);
             throw e;
         }
@@ -83,9 +91,9 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
 
     @Override
     public void eventIpcConnectionDestroy(IpcConnection connection) {
-        Access access = connection.get(ACCESS_LOG);
-        if (access != null) {
-            access.doLog();
-        }
+        final Access access = connection.get(ACCESS_LOG);
+        if (access == null) return;
+        access.doLog();
     }
+    
 }

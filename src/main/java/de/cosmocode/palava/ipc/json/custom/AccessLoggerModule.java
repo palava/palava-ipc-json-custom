@@ -18,17 +18,18 @@ package de.cosmocode.palava.ipc.json.custom;
 
 import de.cosmocode.palava.ipc.Commands;
 import de.cosmocode.palava.ipc.FilterModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.cosmocode.palava.ipc.IpcCommand;
 
 /**
+ * Configures {@link AccessLogger} to run before every {@link IpcCommand}.
+ * 
  * @author Tobias Sarnowski
  */
 public class AccessLoggerModule extends FilterModule {
-    private static final Logger LOG = LoggerFactory.getLogger(AccessLoggerModule.class);
 
     @Override
     protected void configure() {
         filter(Commands.any()).through(AccessLogger.class);
     }
+    
 }
