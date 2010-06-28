@@ -173,9 +173,20 @@ final class CustomProtocol extends MapProtocol implements Initializable, Disposa
         
         final String identifier = String.class.cast(meta.get(IDENTIFIER));
         final String sessionId = String.class.cast(request.get(SESSION));
-        
-        final IpcSession session = provider.getSession(sessionId, identifier);
-        connection.attachTo(session);
+
+        final IpcSession session;
+        if (!connection.isAttached()) {
+            session = provider.getSession(sessionId, identifier);
+            connection.attachTo(session);
+        } else {
+            IpcSession attached = connection.getSession();
+            if (!attached.getSessionId().equals(sessionId) || !attached.getIdentifier().equals(identifier) || attached.isExpired()) {
+                session = provider.getSession(sessionId, identifier);
+                connection.attachTo(session);
+            } else {
+                session = attached;
+            }
+        }
         
         LOG.trace("Using {}", session);
         response.put(SESSION, session.getSessionId());

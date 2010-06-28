@@ -29,5 +29,10 @@
       <artifactId>palava-ipc-json</artifactId>
       <version>[1.0,2)</version>
     </dependency>
+      <dependency>
+      <groupId>de.cosmocode.palava</groupId>
+      <artifactId>palava-ipc-protocol</artifactId>
+      <version>[1.1,2)</version>
+    </dependency>
   </dependencies>
 </project>
