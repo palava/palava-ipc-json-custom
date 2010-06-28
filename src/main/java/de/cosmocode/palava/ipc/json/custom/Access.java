@@ -31,6 +31,7 @@ final class Access {
     private static final Logger LOG = LoggerFactory.getLogger(Access.class);
 
     private final String requestUri;
+    private String sessionId;
     private String identifier;
 
     private int success;
@@ -43,6 +44,9 @@ final class Access {
 
     public void logSuccess(IpcCall call) {
         success++;
+        if (sessionId == null) {
+            sessionId = call.getConnection().getSession().getSessionId();
+        }
     }
 
     public void logFailure(IpcCall call) {
@@ -50,8 +54,8 @@ final class Access {
     }
 
     public void doLog() {
-        LOG.info("{}  ({} successful, {} failed commands, {})", new Object[]{
-            requestUri, success, failure, identifier
+        LOG.info("{}  ({} successful, {} failed commands, {} / {})", new Object[]{
+            requestUri, success, failure, sessionId, identifier
         });
     }
     
