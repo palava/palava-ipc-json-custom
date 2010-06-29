@@ -40,6 +40,8 @@ final class Access {
     public Access(String requestUri, String identifier) {
         this.requestUri = requestUri;
         this.identifier = identifier;
+
+        LOG.debug("\n\n========== {} ==========\n", requestUri);
     }
 
     public void logSuccess(IpcCall call) {
