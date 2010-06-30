@@ -22,9 +22,11 @@ import org.slf4j.LoggerFactory;
 import de.cosmocode.palava.ipc.IpcCall;
 
 /**
- * 
- * 
+ * A utility class which is used by {@link AccessLogger} to count and log
+ * succeeded and failed command execution.
+ *  
  * @author Tobias Sarnowski
+ * @author Willi Schoenborn
  */
 final class Access {
     
@@ -44,18 +46,35 @@ final class Access {
         LOG.debug("\n\n========== {} ==========\n", requestUri);
     }
 
-    public void logSuccess(IpcCall call) {
+    /**
+     * Counts a successful command execution.
+     * 
+     * @since 1.2
+     * @param call the current call
+     */
+    public void success(IpcCall call) {
         success++;
         if (sessionId == null) {
             sessionId = call.getConnection().getSession().getSessionId();
         }
     }
 
-    public void logFailure(IpcCall call) {
+    /**
+     * Counts a failed command execution.
+     * 
+     * @since 1.2
+     * @param call the current call
+     */
+    public void failure(IpcCall call) {
         failure++;
     }
 
-    public void doLog() {
+    /**
+     * Logs the collected results using the {@link Logger} of this class.
+     * 
+     * @since 1.2
+     */
+    public void log() {
         LOG.info("{}  ({} successful, {} failed commands, {} / {})", new Object[]{
             requestUri, success, failure, sessionId, identifier
         });

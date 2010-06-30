@@ -175,17 +175,29 @@ final class CustomProtocol extends MapProtocol implements Initializable, Disposa
         final String sessionId = String.class.cast(request.get(SESSION));
 
         final IpcSession session;
-        if (!connection.isAttached()) {
-            session = provider.getSession(sessionId, identifier);
-            connection.attachTo(session);
-        } else {
-            IpcSession attached = connection.getSession();
-            if (!attached.getSessionId().equals(sessionId) || !attached.getIdentifier().equals(identifier) || attached.isExpired()) {
+        
+        if (connection.isAttached()) {
+            final IpcSession attached = connection.getSession();
+            
+            if (!attached.getSessionId().equals(sessionId)) {
+                LOG.trace("SessionId of attached session differs from requested");
                 session = provider.getSession(sessionId, identifier);
-                connection.attachTo(session);
+            } else if (!attached.getIdentifier().equals(identifier)) {
+                LOG.trace("Identifier of attached session differs from requested");
+                session = provider.getSession(sessionId, identifier);
+            } else if (attached.isExpired()) {
+                LOG.trace("Attached session is expired, using new");
+                session = provider.getSession(sessionId, identifier);
             } else {
+                LOG.trace("Re-using already attached session");
                 session = attached;
             }
+            
+            connection.attachTo(session);
+        } else {
+            LOG.trace("Connection is not yet attached, retrieving session {}/{}", sessionId, identifier);
+            session = provider.getSession(sessionId, identifier);
+            connection.attachTo(session);
         }
         
         LOG.trace("Using {}", session);

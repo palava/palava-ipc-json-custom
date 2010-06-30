@@ -76,15 +76,15 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
 
         try {
             final Map<String, Object> result = chain.filter(call, command);
-            access.logSuccess(call);
+            access.success(call);
             return result;
         } catch (IpcCommandExecutionException e) {
-            access.logFailure(call);
+            access.failure(call);
             throw e;
         /* CHECKSTYLE:OFF */
         } catch (RuntimeException e) {
         /* CHECKSTYLE:ON */
-            access.logFailure(call);
+            access.failure(call);
             throw e;
         }
     }
@@ -93,7 +93,7 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
     public void eventIpcConnectionDestroy(IpcConnection connection) {
         final Access access = connection.get(ACCESS_LOG);
         if (access == null) return;
-        access.doLog();
+        access.log();
     }
     
 }
