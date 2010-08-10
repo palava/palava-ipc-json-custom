@@ -16,15 +16,9 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-
 import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.Registry.Key;
 import de.cosmocode.palava.core.Registry.Proxy;
@@ -32,20 +26,13 @@ import de.cosmocode.palava.core.Registry.SilentProxy;
 import de.cosmocode.palava.core.lifecycle.Disposable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
 import de.cosmocode.palava.core.lifecycle.LifecycleException;
-import de.cosmocode.palava.ipc.IpcArguments;
-import de.cosmocode.palava.ipc.IpcCallCreateEvent;
-import de.cosmocode.palava.ipc.IpcCallDestroyEvent;
-import de.cosmocode.palava.ipc.IpcCallScope;
-import de.cosmocode.palava.ipc.IpcCommandExecutor;
-import de.cosmocode.palava.ipc.IpcSession;
-import de.cosmocode.palava.ipc.IpcSessionProvider;
-import de.cosmocode.palava.ipc.MapIpcArguments;
+import de.cosmocode.palava.ipc.*;
 import de.cosmocode.palava.ipc.json.Json;
-import de.cosmocode.palava.ipc.protocol.DetachedCall;
-import de.cosmocode.palava.ipc.protocol.DetachedConnection;
-import de.cosmocode.palava.ipc.protocol.MapProtocol;
-import de.cosmocode.palava.ipc.protocol.Protocol;
-import de.cosmocode.palava.ipc.protocol.ProtocolException;
+import de.cosmocode.palava.ipc.protocol.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Implements a custom json-based ipc protocol which relies on the following
@@ -94,38 +81,33 @@ import de.cosmocode.palava.ipc.protocol.ProtocolException;
  * @author Tobias Sarnowski
  * @author Willi Schoenborn
  */
-final class CustomProtocol extends MapProtocol implements Initializable, Disposable {
-
-    public static final String REQUEST_URI = "request_uri";
+public final class CustomProtocol extends MapProtocol implements Initializable, Disposable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomProtocol.class);
 
-    private static final String VERSION = "palava2/1.0";
+    // protocol keys
+    public static final String VERSION = "palava2/1.0";
+    public static final String PROTOCOL = "protocol";
+    public static final String META = "meta";
+    public static final String IDENTIFIER = "identifier";
+    public static final String SESSION = "session";
+    public static final String COMMAND = "command";
+    public static final String ARGUMENTS = "arguments";
+    public static final String RESULT = "result";
+    public static final String EXCEPTION = "exception";
 
-    private static final String PROTOCOL = "protocol";
-    
-    private static final String META = "meta";
-    
-    private static final String IDENTIFIER = "identifier";
-    
-    private static final String SESSION = "session";
-    
-    private static final String COMMAND = "command";
-    
-    private static final String ARGUMENTS = "arguments";
-    
-    private static final String RESULT = "result";
-    
-    private static final String EXCEPTION = "exception";
+    // core meta informations
+    public static final String REQUEST_URI = "request_uri";
     
     private final Registry registry;
     
     private final IpcCallCreateEvent createEvent;
-    
     private final IpcCallDestroyEvent destroyEvent;
+
+    private final CustomPreCallEvent preCallEvent;
+    private final CustomPostCallEvent postCallEvent;
     
     private final IpcSessionProvider provider;
-    
     private final IpcCommandExecutor executor;
     
     private final IpcCallScope scope;
@@ -134,14 +116,20 @@ final class CustomProtocol extends MapProtocol implements Initializable, Disposa
     
     @Inject
     public CustomProtocol(Registry registry, 
-        @Proxy IpcCallCreateEvent createEvent, @SilentProxy IpcCallDestroyEvent destroyEvent,
-        IpcSessionProvider provider, IpcCommandExecutor executor, IpcCallScope scope) {
+        @Proxy IpcCallCreateEvent createEvent,
+        @SilentProxy IpcCallDestroyEvent destroyEvent,
+        IpcSessionProvider provider,
+        IpcCommandExecutor executor,
+        IpcCallScope scope) {
         this.registry = Preconditions.checkNotNull(registry, "Registry");
         this.createEvent = Preconditions.checkNotNull(createEvent, "CreateEvent");
         this.destroyEvent = Preconditions.checkNotNull(destroyEvent, "DestroyEvent");
         this.provider = Preconditions.checkNotNull(provider, "SessionProvider");
         this.executor = Preconditions.checkNotNull(executor, "CommandExecutor");
         this.scope = Preconditions.checkNotNull(scope, "Scope");
+
+        preCallEvent = registry.proxy(CustomPreCallEvent.class);
+        postCallEvent = registry.proxy(CustomPostCallEvent.class);
     }
 
     @Inject(optional = true)
@@ -163,6 +151,9 @@ final class CustomProtocol extends MapProtocol implements Initializable, Disposa
     public Map<String, Object> process(Map<?, ?> request, DetachedConnection connection) throws ProtocolException {
         final Map<String, Object> response = Maps.newHashMap();
         response.put(PROTOCOL, VERSION);
+
+        // trigger manipulation event
+        preCallEvent.eventPreCall(request, response, connection);
 
         final Map<?, ?> meta = Map.class.cast(request.get(META));
         checkNotNull(meta, META);
@@ -229,7 +220,10 @@ final class CustomProtocol extends MapProtocol implements Initializable, Disposa
             destroyEvent.eventIpcCallDestroy(call);
             scope.exit();
         }
-        
+
+        // trigger manipulation events
+        postCallEvent.eventPostCall(request, response, connection);
+
         return response;
     }
     
