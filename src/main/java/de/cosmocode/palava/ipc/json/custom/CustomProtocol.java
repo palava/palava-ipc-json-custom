@@ -81,7 +81,7 @@ import java.util.Map;
  * @author Tobias Sarnowski
  * @author Willi Schoenborn
  */
-public final class CustomProtocol extends MapProtocol implements Initializable, Disposable {
+public final class CustomProtocol implements Protocol, Initializable, Disposable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomProtocol.class);
 
@@ -143,12 +143,14 @@ public final class CustomProtocol extends MapProtocol implements Initializable, 
     }
     
     @Override
-    public boolean supports(Map<?, ?> request) {
-        return VERSION.equals(request.get(PROTOCOL));
+    public boolean supports(Object request) {
+        return VERSION.equals(((Map)request).get(PROTOCOL));
     }
     
     @Override
-    public Map<String, Object> process(Map<?, ?> request, DetachedConnection connection) throws ProtocolException {
+    public Map<String, Object> process(Object requestObj, DetachedConnection connection) throws ProtocolException {
+        Map<String,Object> request = (Map<String,Object>)requestObj;
+
         final Map<String, Object> response = Maps.newHashMap();
         response.put(PROTOCOL, VERSION);
 
@@ -234,11 +236,11 @@ public final class CustomProtocol extends MapProtocol implements Initializable, 
     }
     
     @Override
-    public Object onError(Throwable t, Map<?, ?> request) {
+    public Object onError(Throwable t, Object request) {
         LOG.warn("Unexpected exception in custom protocol", t);
         return newHashMap(
             PROTOCOL, VERSION,
-            SESSION, request.get(SESSION),
+            SESSION, ((Map)request).get(SESSION),
             EXCEPTION, encoder.encode(t)
         );
     }

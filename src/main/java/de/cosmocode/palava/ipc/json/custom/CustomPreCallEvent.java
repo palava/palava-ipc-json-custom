@@ -32,6 +32,6 @@ public interface CustomPreCallEvent {
      * @param response the response which will be filled
      * @param connection a detached connection
      */
-    void eventPreCall(Map<?, ?> request, Map<?, ?> response, DetachedConnection connection);
+    void eventPreCall(Map<String, Object> request, Map<String, Object> response, DetachedConnection connection);
 
 }

@@ -32,6 +32,6 @@ public interface CustomPostCallEvent {
      * @param response the outgoing response
      * @param connection the used detached connection
      */
-    void eventPostCall(Map<?, ?> request, Map<?, ?> response, DetachedConnection connection);
+    void eventPostCall(Map<String, Object> request, Map<String, Object> response, DetachedConnection connection);
 
 }
