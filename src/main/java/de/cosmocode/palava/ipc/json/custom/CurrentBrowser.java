@@ -61,8 +61,7 @@ final class CurrentBrowser implements Browser {
 
     @Override
     public String getReferer() {
-        //return getKey("REFERER");
-        throw new UnsupportedOperationException("Referer not yet implemented!");
+        return getKey("HTTP_REFERER");
     }
 
     @Override

@@ -84,12 +84,12 @@ import java.util.Map;
  * @author Tobias Sarnowski
  * @author Willi Schoenborn
  */
-public final class CustomProtocol implements Protocol, Initializable, Disposable {
+final class CustomProtocol implements Protocol, Initializable, Disposable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomProtocol.class);
 
     // protocol keys
-    public static final String VERSION = "palava2/1.0";
+    public static final String VERSION = "palava2/1.1";
     public static final String PROTOCOL = "protocol";
     public static final String META = "meta";
     public static final String IDENTIFIER = "REMOTE_ADDR";
@@ -112,7 +112,7 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
     
     private final IpcCallScope scope;
 
-    private ThrowableEncoder encoder = new CustomThrowableEncoder();
+    private final ThrowableEncoder encoder = new ThrowableEncoder();
 
     @Inject
     public CustomProtocol(Registry registry, 
@@ -130,11 +130,6 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
 
         preCallEvent = registry.proxy(CustomPreCallEvent.class);
         postCallEvent = registry.proxy(CustomPostCallEvent.class);
-    }
-
-    @Inject(optional = true)
-    void setEncoder(ThrowableEncoder encoder) {
-        this.encoder = Preconditions.checkNotNull(encoder, "Encoder");
     }
     
     @Override

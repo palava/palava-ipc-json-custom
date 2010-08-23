@@ -16,25 +16,45 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import java.util.List;
 import java.util.Map;
 
+
 /**
- * Defines an encoder for {@link Throwable}s. A {@link ThrowableEncoder}
- * can be used in the {@link CustomProtocol} to define a custom
- * way to encode {@link Exception}s.
- *
  * @since 1.0
  * @author Willi Schoenborn
  */
-interface ThrowableEncoder {
+final class ThrowableEncoder {
 
-    /**
-     * Transforms the specified throwable into a map.
-     * 
-     * @since 1.0
-     * @param throwable the throwable
-     * @return a map containing all relevant information
-     */
-    Map<String, Object> encode(Throwable throwable);
-    
+    public Map<String, Object> encode(Throwable throwable) {
+        Preconditions.checkNotNull(throwable, "Throwable");
+        final Throwable root = Throwables.getRootCause(throwable);
+        final Map<String, Object> map = Maps.newHashMap();
+        
+        map.put("name", root.getClass().getName());
+        map.put("message", root.getMessage());
+        
+        final List<Map<String, Object>> stacktrace = Lists.newLinkedList();
+        
+        for (StackTraceElement element : root.getStackTrace()) {
+            final Map<String, Object> mappedElement = Maps.newHashMap();
+            
+            mappedElement.put("class", element.getClassName());
+            mappedElement.put("filename", element.getFileName());
+            mappedElement.put("line", element.getLineNumber());
+            mappedElement.put("method", element.getMethodName());
+            
+            stacktrace.add(mappedElement);
+        }
+        
+        map.put("stacktrace", stacktrace);
+        
+        return map;
+    }
+
 }
