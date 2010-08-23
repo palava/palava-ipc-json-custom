@@ -26,7 +26,7 @@ import java.util.Map;
  * @since 1.0
  * @author Willi Schoenborn
  */
-public interface ThrowableEncoder {
+interface ThrowableEncoder {
 
     /**
      * Transforms the specified throwable into a map.
