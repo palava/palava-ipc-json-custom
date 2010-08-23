@@ -28,7 +28,10 @@ import de.cosmocode.palava.core.lifecycle.Initializable;
 import de.cosmocode.palava.core.lifecycle.LifecycleException;
 import de.cosmocode.palava.ipc.*;
 import de.cosmocode.palava.ipc.json.Json;
-import de.cosmocode.palava.ipc.protocol.*;
+import de.cosmocode.palava.ipc.protocol.DetachedCall;
+import de.cosmocode.palava.ipc.protocol.DetachedConnection;
+import de.cosmocode.palava.ipc.protocol.Protocol;
+import de.cosmocode.palava.ipc.protocol.ProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,15 +92,12 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
     public static final String VERSION = "palava2/1.0";
     public static final String PROTOCOL = "protocol";
     public static final String META = "meta";
-    public static final String IDENTIFIER = "identifier";
+    public static final String IDENTIFIER = "REMOTE_ADDR";
     public static final String SESSION = "session";
     public static final String COMMAND = "command";
     public static final String ARGUMENTS = "arguments";
     public static final String RESULT = "result";
     public static final String EXCEPTION = "exception";
-
-    // core meta informations
-    public static final String REQUEST_URI = "request_uri";
     
     private final Registry registry;
     
@@ -111,9 +111,9 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
     private final IpcCommandExecutor executor;
     
     private final IpcCallScope scope;
-    
+
     private ThrowableEncoder encoder = new CustomThrowableEncoder();
-    
+
     @Inject
     public CustomProtocol(Registry registry, 
         @Proxy IpcCallCreateEvent createEvent,
@@ -159,9 +159,6 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
 
         final Map<?, ?> meta = Map.class.cast(request.get(META));
         checkNotNull(meta, META);
-
-        final String requestUri = String.class.cast(meta.get(REQUEST_URI));
-        connection.set(REQUEST_URI, requestUri);
         
         final String identifier = String.class.cast(meta.get(IDENTIFIER));
         final String sessionId = String.class.cast(request.get(SESSION));

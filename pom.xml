@@ -26,6 +26,11 @@
         </dependency>
         <dependency>
             <groupId>de.cosmocode.palava</groupId>
+            <artifactId>palava-ipc</artifactId>
+            <version>[1.9-SNAPSHOT,2)</version>
+        </dependency>
+        <dependency>
+            <groupId>de.cosmocode.palava</groupId>
             <artifactId>palava-ipc-json</artifactId>
             <version>[1.0,2)</version>
         </dependency>

@@ -16,10 +16,10 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
+import de.cosmocode.palava.ipc.Browser;
+import de.cosmocode.palava.ipc.IpcCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.cosmocode.palava.ipc.IpcCall;
 
 /**
  * A utility class which is used by {@link AccessLogger} to count and log
@@ -32,18 +32,29 @@ final class Access {
     
     private static final Logger LOG = LoggerFactory.getLogger(Access.class);
 
-    private final String requestUri;
     private String sessionId;
     private String identifier;
+
+    private final String requestUrl;
 
     private int success;
     private int failure;
 
-    public Access(String requestUri, String identifier) {
-        this.requestUri = requestUri;
+    public Access(Browser browser, String identifier) {
         this.identifier = identifier;
 
-        LOG.debug("\n\n========== {} ==========\n", requestUri);
+        StringBuilder requestUrl = new StringBuilder();
+        if (browser.isHttps()) {
+            requestUrl.append("https://");
+        } else {
+            requestUrl.append("http://");
+        }
+        requestUrl.append(browser.getHttpHost());
+        requestUrl.append(browser.getRequestUri());
+
+        this.requestUrl = requestUrl.toString();
+
+        LOG.debug("\n\n========== {} ==========\n", this.requestUrl);
     }
 
     /**
@@ -76,7 +87,7 @@ final class Access {
      */
     public void log() {
         LOG.info("{}  ({} successful, {} failed commands, {} / {})", new Object[]{
-            requestUri, success, failure, sessionId, identifier
+            requestUrl, success, failure, sessionId, identifier
         });
     }
     

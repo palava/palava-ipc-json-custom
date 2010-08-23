@@ -16,22 +16,16 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
-import java.util.Map;
-
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
-
 import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.lifecycle.Disposable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
 import de.cosmocode.palava.core.lifecycle.LifecycleException;
-import de.cosmocode.palava.ipc.IpcCall;
-import de.cosmocode.palava.ipc.IpcCallFilter;
-import de.cosmocode.palava.ipc.IpcCallFilterChain;
-import de.cosmocode.palava.ipc.IpcCommand;
-import de.cosmocode.palava.ipc.IpcCommandExecutionException;
-import de.cosmocode.palava.ipc.IpcConnection;
-import de.cosmocode.palava.ipc.IpcConnectionDestroyEvent;
+import de.cosmocode.palava.ipc.*;
+
+import java.util.Map;
 
 /**
  * A filter which logs ipc access.
@@ -44,10 +38,12 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
     private static final String ACCESS_LOG = "ACCESS_LOG";
     
     private final Registry registry;
+    private final Provider<Browser> currentBrowserProvider;
 
     @Inject
-    public AccessLogger(Registry registry) {
+    public AccessLogger(Registry registry, @Current Provider<Browser> currentBrowserProvider) {
         this.registry = registry;
+        this.currentBrowserProvider = currentBrowserProvider;
     }
 
     @Override
@@ -68,9 +64,8 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
         
         // new connection?
         if (access == null) {
-            final String requestUri = call.getConnection().get(CustomProtocol.REQUEST_URI);
             final String identifier = call.getConnection().getSession().getIdentifier();
-            access = new Access(requestUri, identifier);
+            access = new Access(currentBrowserProvider.get(), identifier);
             call.getConnection().set(ACCESS_LOG, access);
         }
 

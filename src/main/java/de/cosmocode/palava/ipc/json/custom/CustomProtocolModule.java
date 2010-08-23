@@ -18,6 +18,11 @@ package de.cosmocode.palava.ipc.json.custom;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Provides;
+import de.cosmocode.palava.ipc.Browser;
+import de.cosmocode.palava.ipc.Current;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCallScoped;
 
 /**
  * Binds {@link CustomProtocol} as eager singleton.
@@ -32,4 +37,10 @@ public final class CustomProtocolModule implements Module {
         binder.bind(CustomProtocol.class).asEagerSingleton();
     }
 
+    @Provides
+    @IpcCallScoped
+    @Current
+    public Browser getCurrentBrowser(IpcCall call) {
+        return new CurrentBrowser(call);
+    }
 }
