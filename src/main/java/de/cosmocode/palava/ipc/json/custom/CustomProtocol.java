@@ -86,8 +86,6 @@ import java.util.Map;
  */
 public final class CustomProtocol implements Protocol, Initializable, Disposable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CustomProtocol.class);
-
     // protocol keys
     public static final String VERSION = "palava2/1.1";
     public static final String PROTOCOL = "protocol";
@@ -98,6 +96,8 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
     public static final String ARGUMENTS = "arguments";
     public static final String RESULT = "result";
     public static final String EXCEPTION = "exception";
+
+    private static final Logger LOG = LoggerFactory.getLogger(CustomProtocol.class);
     
     private final Registry registry;
     
