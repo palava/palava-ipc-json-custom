@@ -84,7 +84,7 @@ import java.util.Map;
  * @author Tobias Sarnowski
  * @author Willi Schoenborn
  */
-final class CustomProtocol implements Protocol, Initializable, Disposable {
+public final class CustomProtocol implements Protocol, Initializable, Disposable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomProtocol.class);
 
@@ -115,7 +115,7 @@ final class CustomProtocol implements Protocol, Initializable, Disposable {
     private final ThrowableEncoder encoder = new ThrowableEncoder();
 
     @Inject
-    public CustomProtocol(Registry registry, 
+    CustomProtocol(Registry registry,
         @Proxy IpcCallCreateEvent createEvent,
         @SilentProxy IpcCallDestroyEvent destroyEvent,
         IpcSessionProvider provider,
@@ -198,6 +198,9 @@ final class CustomProtocol implements Protocol, Initializable, Disposable {
         
         final DetachedCall call = new CustomCall(arguments);
         call.attachTo(connection);
+
+        // make the meta informations available in the call scope
+        call.set(META, meta);
         
         createEvent.eventIpcCallCreate(call);
         scope.enter(call);

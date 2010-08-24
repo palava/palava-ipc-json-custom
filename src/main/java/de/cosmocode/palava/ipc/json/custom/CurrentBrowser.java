@@ -21,6 +21,8 @@ import de.cosmocode.palava.ipc.IpcCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * @since 2.0
  * @author Tobias Sarnowski
@@ -35,21 +37,22 @@ final class CurrentBrowser implements Browser {
     }
 
     private String getKey(String key) {
-        if (!ipcCall.contains(key)) {
+        Map<?, ?> meta = ipcCall.get(CustomProtocol.META);
+        if (!meta.containsKey(key)) {
             throw new UnsupportedOperationException("Information " + key + " not available");
         }
-        String value = ipcCall.get(key);
+        Object value = meta.get(key);
         if (value == null) {
             throw new UnsupportedOperationException("Information " + key + " is null");
         }
-        return value;
+        return value.toString();
     }
 
     private boolean getBoolKey(String key) {
-        String https = getKey("HTTP_HOST");
-        if ("TRUE".equalsIgnoreCase(https)) {
+        String value = getKey(key);
+        if ("TRUE".equalsIgnoreCase(value) || "1".equals(value)) {
             return true;
-        } else if ("FALSE".equalsIgnoreCase(https)) {
+        } else if ("FALSE".equalsIgnoreCase(value) || "0".equals(value)) {
             return false;
         } else {
             throw new UnsupportedOperationException("Information " + key + " is not valid");
