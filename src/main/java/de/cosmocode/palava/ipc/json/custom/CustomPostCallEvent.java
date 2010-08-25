@@ -16,9 +16,9 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
-import de.cosmocode.palava.ipc.protocol.DetachedConnection;
-
 import java.util.Map;
+
+import de.cosmocode.palava.ipc.protocol.DetachedConnection;
 
 /**
  * @author Tobias Sarnowski

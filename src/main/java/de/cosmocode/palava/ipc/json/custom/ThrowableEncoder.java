@@ -16,13 +16,13 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import java.util.List;
-import java.util.Map;
 
 
 /**

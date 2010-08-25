@@ -16,12 +16,13 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
-import de.cosmocode.palava.ipc.Browser;
-import de.cosmocode.palava.ipc.IpcCall;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import de.cosmocode.palava.ipc.Browser;
+import de.cosmocode.palava.ipc.IpcCall;
 
 /**
  * @since 2.0

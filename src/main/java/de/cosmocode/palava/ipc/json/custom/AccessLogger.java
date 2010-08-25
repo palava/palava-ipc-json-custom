@@ -16,16 +16,25 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
+import java.util.Map;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+
 import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.lifecycle.Disposable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
 import de.cosmocode.palava.core.lifecycle.LifecycleException;
-import de.cosmocode.palava.ipc.*;
-
-import java.util.Map;
+import de.cosmocode.palava.ipc.Browser;
+import de.cosmocode.palava.ipc.Current;
+import de.cosmocode.palava.ipc.IpcCall;
+import de.cosmocode.palava.ipc.IpcCallFilter;
+import de.cosmocode.palava.ipc.IpcCallFilterChain;
+import de.cosmocode.palava.ipc.IpcCommand;
+import de.cosmocode.palava.ipc.IpcCommandExecutionException;
+import de.cosmocode.palava.ipc.IpcConnection;
+import de.cosmocode.palava.ipc.IpcConnectionDestroyEvent;
 
 /**
  * A filter which logs ipc access.

@@ -16,15 +16,17 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+
 import de.cosmocode.palava.ipc.Browser;
 import de.cosmocode.palava.ipc.Current;
 import de.cosmocode.palava.ipc.IpcCall;
 import de.cosmocode.palava.ipc.IpcCallScoped;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 2.0

@@ -16,10 +16,11 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
-import de.cosmocode.palava.ipc.Browser;
-import de.cosmocode.palava.ipc.IpcCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.cosmocode.palava.ipc.Browser;
+import de.cosmocode.palava.ipc.IpcCall;
 
 /**
  * A utility class which is used by {@link AccessLogger} to count and log
