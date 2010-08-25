@@ -21,6 +21,8 @@ import java.util.Map;
 import de.cosmocode.palava.ipc.protocol.DetachedConnection;
 
 /**
+ * Event interface for pre-call.
+ * 
  * @author Tobias Sarnowski
  */
 public interface CustomPreCallEvent {

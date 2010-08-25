@@ -148,12 +148,13 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
     
     @Override
     public boolean supports(Object request) {
-        return VERSION.equals(((Map)request).get(PROTOCOL));
+        return request instanceof Map<?, ?> && VERSION.equals(Map.class.cast(request).get(PROTOCOL));
     }
     
     @Override
     public Map<String, Object> process(Object requestObj, DetachedConnection connection) throws ProtocolException {
-        Map<String,Object> request = (Map<String,Object>)requestObj;
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> request = (Map<String, Object>) requestObj;
 
         final Map<String, Object> response = Maps.newHashMap();
         response.put(PROTOCOL, VERSION);
@@ -244,7 +245,7 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
         LOG.warn("Unexpected exception in custom protocol", t);
         return newHashMap(
             PROTOCOL, VERSION,
-            SESSION, ((Map)request).get(SESSION),
+            SESSION, Map.class.cast(request).get(SESSION),
             EXCEPTION, encoder.encode(t)
         );
     }

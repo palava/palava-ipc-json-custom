@@ -44,16 +44,12 @@ final class Access {
     public Access(Browser browser, String identifier) {
         this.identifier = identifier;
 
-        StringBuilder requestUrl = new StringBuilder();
-        if (browser.isHttps()) {
-            requestUrl.append("https://");
-        } else {
-            requestUrl.append("http://");
-        }
-        requestUrl.append(browser.getHttpHost());
-        requestUrl.append(browser.getRequestUri());
+        final StringBuilder url = new StringBuilder();
+        url.append(browser.isHttps() ? "https://" : "http://");
+        url.append(browser.getHttpHost());
+        url.append(browser.getRequestUri());
 
-        this.requestUrl = requestUrl.toString();
+        this.requestUrl = url.toString();
 
         LOG.debug("\n\n========== {} ==========\n", this.requestUrl);
     }

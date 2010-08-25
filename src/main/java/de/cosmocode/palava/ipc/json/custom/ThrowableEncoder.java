@@ -24,13 +24,22 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-
 /**
+ * Encodes {@link Throwable}s into {@link Map}s.
+ * 
  * @since 1.0
  * @author Willi Schoenborn
  */
 final class ThrowableEncoder {
 
+    /**
+     * Encodes the given throwable into a map.
+     * 
+     * @since 1.0
+     * @param throwable the given throwable
+     * @return a map containing all required information
+     * @throws NullPointerException if throwable is null
+     */
     public Map<String, Object> encode(Throwable throwable) {
         Preconditions.checkNotNull(throwable, "Throwable");
         final Throwable root = Throwables.getRootCause(throwable);

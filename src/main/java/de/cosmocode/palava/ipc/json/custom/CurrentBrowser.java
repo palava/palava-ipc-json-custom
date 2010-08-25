@@ -18,31 +18,33 @@ package de.cosmocode.palava.ipc.json.custom;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 
 import de.cosmocode.palava.ipc.Browser;
 import de.cosmocode.palava.ipc.IpcCall;
 
 /**
+ * {@link CustomCall} based {@link Browser} implementation.
+ * 
  * @since 2.0
  * @author Tobias Sarnowski
  */
 final class CurrentBrowser implements Browser {
-    private static final Logger LOG = LoggerFactory.getLogger(CurrentBrowser.class);
 
-    private final IpcCall ipcCall;
+    private final IpcCall call;
 
-    CurrentBrowser(IpcCall ipcCall) {
-        this.ipcCall = ipcCall;
+    @Inject
+    public CurrentBrowser(IpcCall call) {
+        this.call = Preconditions.checkNotNull(call, "Call");
     }
 
     private String getKey(String key) {
-        Map<?, ?> meta = ipcCall.get(CustomProtocol.META);
+        final Map<?, ?> meta = call.get(CustomProtocol.META);
         if (!meta.containsKey(key)) {
             throw new UnsupportedOperationException("Information " + key + " not available");
         }
-        Object value = meta.get(key);
+        final Object value = meta.get(key);
         if (value == null) {
             throw new UnsupportedOperationException("Information " + key + " is null");
         }
@@ -50,7 +52,7 @@ final class CurrentBrowser implements Browser {
     }
 
     private boolean getBoolKey(String key) {
-        String value = getKey(key);
+        final String value = getKey(key);
         if ("TRUE".equalsIgnoreCase(value) || "1".equals(value)) {
             return true;
         } else if ("FALSE".equalsIgnoreCase(value) || "0".equals(value)) {
@@ -118,8 +120,7 @@ final class CurrentBrowser implements Browser {
 
     @Override
     public String toString() {
-        return "CurrentBrowser{" +
-                "ipcCall=" + ipcCall +
-                '}';
+        return "CurrentBrowser{call=" + call + "}";
     }
+    
 }
