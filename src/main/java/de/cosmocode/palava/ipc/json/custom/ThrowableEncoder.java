@@ -16,13 +16,13 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Encodes {@link Throwable}s into {@link Map}s.
@@ -63,7 +63,7 @@ final class ThrowableEncoder {
         
         map.put("stacktrace", stacktrace);
 
-        List<String> superNames = Lists.newArrayList();
+        final List<String> superNames = Lists.newArrayList();
         fillSuperName(superNames, throwable.getClass());
         map.put("superNames", superNames);
         
@@ -72,14 +72,12 @@ final class ThrowableEncoder {
 
     private void fillSuperName(List<String> names, Class<?> throwable) {
         // do not go further than Throwable
-        if (Exception.class.equals(throwable)) {
+        if (throwable == null || throwable == Exception.class) {
             return;
         }
 
         // list all super classes
-        if (throwable.getSuperclass() != null) {
-            fillSuperName(names, throwable.getSuperclass());
-        }
+        fillSuperName(names, throwable.getSuperclass());
 
         // enlist it
         names.add(throwable.getName());
