@@ -41,8 +41,12 @@ final class Access {
     private int success;
     private int failure;
 
+    private long started;
+
     public Access(Browser browser, String identifier) {
         this.identifier = identifier;
+
+        started = System.currentTimeMillis();
 
         final StringBuilder url = new StringBuilder();
         url.append(browser.isHttps() ? "https://" : "http://");
@@ -52,6 +56,18 @@ final class Access {
         this.requestUrl = url.toString();
 
         LOG.debug("\n\n========== {} ==========\n", this.requestUrl);
+    }
+
+    public long getStarted() {
+        return started;
+    }
+
+    public Logger getLog() {
+        return LOG;
+    }
+
+    public String getRequestUrl() {
+        return requestUrl;
     }
 
     /**

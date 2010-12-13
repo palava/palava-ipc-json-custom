@@ -16,12 +16,10 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
-import java.util.Map;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-
+import com.google.inject.name.Named;
 import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.lifecycle.Disposable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
@@ -36,6 +34,9 @@ import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 import de.cosmocode.palava.ipc.IpcConnection;
 import de.cosmocode.palava.ipc.IpcConnectionDestroyEvent;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 /**
  * A filter which logs ipc access.
  * 
@@ -48,6 +49,11 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
     
     private final Registry registry;
     private final Provider<Browser> currentBrowserProvider;
+
+    private long callThreshold;
+    private TimeUnit callThresholdUnit;
+    private long connectionThreshold;
+    private TimeUnit connectionThresholdUnit;
 
     @Inject
     public AccessLogger(Registry registry, @Current Provider<Browser> currentBrowserProvider) {
@@ -65,8 +71,29 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
         registry.remove(this);
     }
 
+    @Inject(optional = true)
+    public void setCallThreshold(@Named(AccessConfig.CALL_THRESHOLD) long callThreshold) {
+        this.callThreshold = callThreshold;
+    }
+
+    @Inject(optional = true)
+    public void setCallThresholdUnit(@Named(AccessConfig.CALL_THRESHOLD_UNIT) TimeUnit callThresholdUnit) {
+        this.callThresholdUnit = callThresholdUnit;
+    }
+
+    @Inject(optional = true)
+    public void setConnectionThreshold(@Named(AccessConfig.CONNECTION_THRESHOLD) long connectionThreshold) {
+        this.connectionThreshold = connectionThreshold;
+    }
+
+    @Inject(optional = true)
+    public void setConnectionThresholdUnit(
+            @Named(AccessConfig.CONNECTION_THRESHOLD_UNIT) TimeUnit connectionThresholdUnit) {
+        this.connectionThresholdUnit = connectionThresholdUnit;
+    }
+
     @Override
-    public Map<String, Object> filter(IpcCall call, IpcCommand command, IpcCallFilterChain chain) 
+    public Map<String, Object> filter(IpcCall call, IpcCommand command, IpcCallFilterChain chain)
         throws IpcCommandExecutionException {
         
         Access access = call.getConnection().get(ACCESS_LOG);
@@ -79,7 +106,23 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
         }
 
         try {
+            final long startedCall = System.currentTimeMillis();
             final Map<String, Object> result = chain.filter(call, command);
+            final long stoppedCall = System.currentTimeMillis();
+
+            if (callThreshold > 0) {
+                final long used = stoppedCall - startedCall;
+                final long threshold = callThresholdUnit.toMillis(callThreshold);
+
+                if (used >= threshold) {
+                    access.getLog().warn("SLOW CALL detected: {} {} [used: {}ms, threshold: {}ms]",
+                        new Object[]{command.getClass().getName(),
+                            call.getArguments().toString(),
+                            used,
+                            threshold});
+                }
+            }
+
             access.success(call);
             return result;
         } catch (IpcCommandExecutionException e) {
@@ -97,6 +140,17 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
     public void eventIpcConnectionDestroy(IpcConnection connection) {
         final Access access = connection.get(ACCESS_LOG);
         if (access == null) return;
+
+        if (connectionThreshold > 0) {
+            final long used = System.currentTimeMillis() - access.getStarted();
+            final long threshold = connectionThresholdUnit.toMillis(connectionThreshold);
+
+            if (used >= threshold) {
+                access.getLog().warn("SLOW CONNECTION detected: {} [used: {}ms, threshold: {}ms]",
+                    new Object[]{access.getRequestUrl(), used, threshold});
+            }
+        }
+
         access.log();
     }
     
