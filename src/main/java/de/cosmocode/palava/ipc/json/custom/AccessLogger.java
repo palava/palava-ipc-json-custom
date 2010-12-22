@@ -16,10 +16,14 @@
 
 package de.cosmocode.palava.ipc.json.custom;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+
 import de.cosmocode.palava.core.Registry;
 import de.cosmocode.palava.core.lifecycle.Disposable;
 import de.cosmocode.palava.core.lifecycle.Initializable;
@@ -33,9 +37,6 @@ import de.cosmocode.palava.ipc.IpcCommand;
 import de.cosmocode.palava.ipc.IpcCommandExecutionException;
 import de.cosmocode.palava.ipc.IpcConnection;
 import de.cosmocode.palava.ipc.IpcConnectionDestroyEvent;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A filter which logs ipc access.
