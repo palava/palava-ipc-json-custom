@@ -243,19 +243,11 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
     @Override
     public Object onError(Throwable t, Object request) {
         LOG.warn("Unexpected exception in custom protocol", t);
-        return newHashMap(
-            PROTOCOL, VERSION,
-            SESSION, Map.class.cast(request).get(SESSION),
-            EXCEPTION, encoder.encode(t)
-        );
-    }
-    
-    private Map<String, Object> newHashMap(String k1, Object v1, String k2, Object v2, String k3, Object v3) {
-        final Map<String, Object> returnValue = Maps.newHashMap();
-        returnValue.put(k1, v1);
-        returnValue.put(k2, v2);
-        returnValue.put(k3, v3);
-        return returnValue;
+        final Map<String, Object> response = Maps.newHashMap();
+        response.put(PROTOCOL, VERSION);
+        response.put(SESSION, Map.class.cast(request).get(SESSION));
+        response.put(EXCEPTION, encoder.encode(t));
+        return response;
     }
     
     @Override
