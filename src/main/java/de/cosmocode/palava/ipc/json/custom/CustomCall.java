@@ -17,10 +17,9 @@
 package de.cosmocode.palava.ipc.json.custom;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 
 import de.cosmocode.palava.ipc.IpcArguments;
 import de.cosmocode.palava.ipc.IpcCall;
@@ -37,25 +36,25 @@ import de.cosmocode.palava.scope.AbstractScopeContext;
  */
 final class CustomCall extends AbstractScopeContext implements DetachedCall {
 
-    private ConcurrentMap<Object, Object> context;
+    private Map<Object, Object> context;
     
     private final IpcArguments arguments;
     
     private IpcConnection connection;
     
-    CustomCall(IpcArguments arguments) {
+    public CustomCall(IpcArguments arguments) {
         this.arguments = Preconditions.checkNotNull(arguments, "Arguments"); 
     }
     
-    CustomCall(Map<String, Object> arguments) {
+    public CustomCall(Map<String, Object> arguments) {
         Preconditions.checkNotNull(arguments, "Arguments");
         this.arguments = new MapIpcArguments(arguments);
     }
-
+    
     @Override
-    protected ConcurrentMap<Object, Object> delegate() {
+    protected Map<Object, Object> context() {
         if (context == null) {
-            context = new MapMaker().makeMap();
+            context = Maps.newHashMap();
         }
         return context;
     }
