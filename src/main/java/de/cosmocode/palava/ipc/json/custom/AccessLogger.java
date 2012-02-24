@@ -57,7 +57,7 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
     private TimeUnit connectionThresholdUnit;
 
     @Inject
-    public AccessLogger(Registry registry, @Current Provider<Browser> currentBrowserProvider) {
+    AccessLogger(Registry registry, @Current Provider<Browser> currentBrowserProvider) {
         this.registry = registry;
         this.currentBrowserProvider = currentBrowserProvider;
     }

@@ -35,7 +35,7 @@ final class CurrentBrowser implements Browser {
     private final IpcCall call;
 
     @Inject
-    public CurrentBrowser(IpcCall call) {
+    CurrentBrowser(IpcCall call) {
         this.call = Preconditions.checkNotNull(call, "Call");
     }
 

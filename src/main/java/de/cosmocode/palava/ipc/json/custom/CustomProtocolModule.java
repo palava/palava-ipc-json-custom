@@ -22,7 +22,7 @@ import com.google.inject.Module;
 /**
  * Binds {@link CustomProtocol} as eager singleton.
  *
- * @since 
+ * @since 1.0.1
  * @author Willi Schoenborn
  */
 public final class CustomProtocolModule implements Module {

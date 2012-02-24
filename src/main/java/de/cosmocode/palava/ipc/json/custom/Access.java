@@ -34,16 +34,16 @@ final class Access {
     private static final Logger LOG = LoggerFactory.getLogger(Access.class);
 
     private String sessionId;
-    private String identifier;
+    private final String identifier;
 
     private final String requestUrl;
 
     private int success;
     private int failure;
 
-    private long started;
+    private final long started;
 
-    public Access(Browser browser, String identifier) {
+    Access(Browser browser, String identifier) {
         this.identifier = identifier;
 
         started = System.currentTimeMillis();
