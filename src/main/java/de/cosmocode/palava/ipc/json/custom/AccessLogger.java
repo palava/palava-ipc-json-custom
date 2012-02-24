@@ -97,13 +97,13 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
     public Map<String, Object> filter(IpcCall call, IpcCommand command, IpcCallFilterChain chain)
         throws IpcCommandExecutionException {
         
-        Access access = call.getConnection().get(ACCESS_LOG);
+        Access access = Access.class.cast(call.getConnection().get(ACCESS_LOG));
         
         // new connection?
         if (access == null) {
             final String identifier = call.getConnection().getSession().getIdentifier();
             access = new Access(currentBrowserProvider.get(), identifier);
-            call.getConnection().set(ACCESS_LOG, access);
+            call.getConnection().put(ACCESS_LOG, access);
         }
 
         try {
@@ -139,7 +139,7 @@ final class AccessLogger implements IpcCallFilter, IpcConnectionDestroyEvent, In
 
     @Override
     public void eventIpcConnectionDestroy(IpcConnection connection) {
-        final Access access = connection.get(ACCESS_LOG);
+        final Access access = Access.class.cast(connection.get(ACCESS_LOG));
         if (access == null) return;
 
         if (connectionThreshold > 0) {
