@@ -96,7 +96,7 @@ import de.cosmocode.palava.ipc.protocol.ProtocolException;
 public final class CustomProtocol implements Protocol, Initializable, Disposable {
 
     // protocol keys
-    public static final String VERSION = "palava2/1.1";
+    public static final String VERSION = "palava2/1.3";
     public static final String PROTOCOL = "protocol";
     public static final String META = "meta";
     public static final String IDENTIFIER = "REMOTE_ADDR";
@@ -210,7 +210,7 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
         call.attachTo(connection);
 
         // make the meta informations available in the call scope
-        call.set(META, meta);
+        call.put(META, meta);
         
         createEvent.eventIpcCallCreate(call);
         scope.enter(call);

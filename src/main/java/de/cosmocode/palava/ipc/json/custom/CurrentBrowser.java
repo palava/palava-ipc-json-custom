@@ -40,7 +40,7 @@ final class CurrentBrowser implements Browser {
     }
 
     private String getKey(String key) {
-        final Map<?, ?> meta = call.get(CustomProtocol.META);
+        final Map<?, ?> meta = Map.class.cast(call.get(CustomProtocol.META));
         if (!meta.containsKey(key)) {
             throw new UnsupportedOperationException("Information " + key + " not available");
         }
