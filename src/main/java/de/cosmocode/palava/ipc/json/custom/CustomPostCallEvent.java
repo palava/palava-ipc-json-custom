@@ -18,7 +18,7 @@ package de.cosmocode.palava.ipc.json.custom;
 
 import java.util.Map;
 
-import de.cosmocode.palava.ipc.protocol.DetachedConnection;
+import de.cosmocode.palava.ipc.IpcConnection;
 
 /**
  * Event interface for post-call.
@@ -32,8 +32,8 @@ public interface CustomPostCallEvent {
      *
      * @param request the incoming request
      * @param response the outgoing response
-     * @param connection the used detached connection
+     * @param connection the used connection
      */
-    void eventPostCall(Map<String, Object> request, Map<String, Object> response, DetachedConnection connection);
+    void eventPostCall(Map<String, Object> request, Map<String, Object> response, IpcConnection connection);
 
 }

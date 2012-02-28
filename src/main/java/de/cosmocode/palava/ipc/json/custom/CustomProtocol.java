@@ -18,6 +18,7 @@ package de.cosmocode.palava.ipc.json.custom;
 
 import java.util.Map;
 
+import de.cosmocode.palava.ipc.protocol.MapProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,10 +94,10 @@ import de.cosmocode.palava.ipc.protocol.ProtocolException;
  * @author Tobias Sarnowski
  * @author Willi Schoenborn
  */
-public final class CustomProtocol implements Protocol, Initializable, Disposable {
+public final class CustomProtocol extends MapProtocol<String, Object> implements Initializable, Disposable {
 
     // protocol keys
-    public static final String VERSION = "palava2/1.3";
+    public static final String VERSION = "palava2/2.0";
     public static final String PROTOCOL = "protocol";
     public static final String META = "meta";
     public static final String IDENTIFIER = "REMOTE_ADDR";
@@ -147,14 +148,13 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
     }
     
     @Override
-    public boolean supports(Object request) {
-        return request instanceof Map<?, ?> && VERSION.equals(Map.class.cast(request).get(PROTOCOL));
+    public boolean supports(Map<?, ?> request) {
+        return request != null && VERSION.equals(request.get(PROTOCOL));
     }
     
     @Override
-    public Map<String, Object> process(Object requestObj, DetachedConnection connection) throws ProtocolException {
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> request = (Map<String, Object>) requestObj;
+    public Map<String, Object> process(Map<String, Object> request, DetachedConnection connection)
+        throws ProtocolException {
 
         final Map<String, Object> response = Maps.newHashMap();
         response.put(PROTOCOL, VERSION);
@@ -241,7 +241,7 @@ public final class CustomProtocol implements Protocol, Initializable, Disposable
     }
     
     @Override
-    public Object onError(Throwable t, Object request) {
+    public Object onError(Throwable t, Map<String, Object> request) {
         LOG.warn("Unexpected exception in custom protocol", t);
         final Map<String, Object> response = Maps.newHashMap();
         response.put(PROTOCOL, VERSION);
